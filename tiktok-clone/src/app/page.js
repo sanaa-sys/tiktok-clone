@@ -1,7 +1,7 @@
 import { cookies } from "next/headers"
-import VideoFeed from "./components/VideoFeed"
-import VideoUpload from "./components/VideoUpload"
-import Auth from "./components/Auth"
+import VideoFeed from "@/components/VideoFeed"
+import VideoUpload from "@/components/VideoUpload"
+import Auth from "@/components/Auth"
 
 export default async function Home() {
     // Mock session check
