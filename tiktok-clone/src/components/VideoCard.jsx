@@ -2,32 +2,34 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Heart, MessageCircle, Share2, Bookmark } from "lucide-react"
+import { Heart, MessageCircle, Share2 } from "lucide-react"
+import { useAuth } from "@clerk/nextjs"
 
 export default function VideoCard({ video }) {
     const [likes, setLikes] = useState(0)
     const [comments, setComments] = useState([])
     const [newComment, setNewComment] = useState("")
+    const { userId } = useAuth()
 
     const handleLike = async () => {
-        // In a real app, you'd send this to your API
+        if (!userId) return alert("Please log in to like videos")
         setLikes(likes + 1)
+        // In a real app, you'd update this in your database
     }
 
     const handleComment = async () => {
-        // In a real app, you'd send this to your API
-        setComments([...comments, { id: Date.now(), content: newComment }])
+        if (!userId) return alert("Please log in to comment")
+        if (!newComment.trim()) return
+
+        const newCommentObj = { id: Date.now(), content: newComment, userId }
+        setComments([...comments, newCommentObj])
         setNewComment("")
+        // In a real app, you'd save this comment to your database
     }
 
     const handleShare = () => {
         // Implement share functionality
         alert("Share functionality to be implemented")
-    }
-
-    const handleFavorite = async () => {
-        // In a real app, you'd send this to your API
-        alert("Video added to favorites!")
     }
 
     return (
@@ -46,9 +48,6 @@ export default function VideoCard({ video }) {
                 <Button onClick={handleShare} variant="ghost">
                     <Share2 />
                 </Button>
-                <Button onClick={handleFavorite} variant="ghost">
-                    <Bookmark />
-                </Button>
             </div>
             {comments.length > 0 && (
                 <div className="mt-4">
@@ -58,16 +57,18 @@ export default function VideoCard({ video }) {
                             {comment.content}
                         </p>
                     ))}
-                    <input
-                        type="text"
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Add a comment..."
-                        className="border rounded p-2 w-full mb-2"
-                    />
-                    <Button onClick={handleComment}>Post Comment</Button>
                 </div>
             )}
+            <div className="mt-4">
+                <input
+                    type="text"
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Add a comment..."
+                    className="border rounded p-2 w-full mb-2"
+                />
+                <Button onClick={handleComment}>Post Comment</Button>
+            </div>
         </div>
     )
 }

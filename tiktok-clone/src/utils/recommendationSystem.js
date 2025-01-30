@@ -4,7 +4,9 @@ import { list } from "@vercel/blob"
 export async function getRecommendedVideos(count = 10) {
     try {
         // Fetch all videos from Vercel Blob
-        const { blobs } = await list()
+        const { blobs } = await list({
+            token: process.env.BLOB_READ_WRITE_TOKEN,
+        })
 
         // Filter for video files and map to our desired format
         const videos = blobs
@@ -29,7 +31,9 @@ export async function getRecommendedVideos(count = 10) {
 // Function to get random videos (fallback if recommendation fails)
 export async function getRandomVideos(count = 10) {
     try {
-        const { blobs } = await list()
+        const { blobs } = await list({
+            token: process.env.BLOB_READ_WRITE_TOKEN,
+        })
         const videos = blobs
             .filter((blob) => blob.pathname.endsWith(".mp4"))
             .map((blob) => ({
